@@ -1,0 +1,3 @@
+-- We can implement fault tolerance patterns such as, circuit breakers, retries using libraries like Resilience4j.
+-- Implementing JpaRepository in repository class and leveraging it's functions to save data to database and also using @Transactional on the method for consistency of database operations.
+-- Implementing any security feature for authentication and authorization (e.g., OAuth, JWT) using Spring Security
