@@ -51,8 +51,9 @@ public class AccountsService {
 			throw new TransferValidationException("No account found for given fromAccountId.");
 		if (toAccount == null)
 			throw new TransferValidationException("No account found for given toAccountId.");
-		synchronized (fromAccount) {
-			synchronized (toAccount) {
+		
+		// Create a lock on combination of both the Account Ids to handle concurrent request
+		synchronized (getAccountLock(fromAccountId, toAccountId)) {
 				// Check from account has sufficient balance
 				if (fromAccount.getBalance().compareTo(transferRequest.getAmount()) < 0) {
 					throw new TransferValidationException("Given Account id: " + fromAccountId
@@ -73,8 +74,12 @@ public class AccountsService {
 						"Successfully received amount " + transferRequest.getAmount() + " from Account " + fromAccount);
 				notificationService.notifyAboutTransfer(fromAccount,
 						"Successfully transferred amount " + transferRequest.getAmount() + " to Account " + toAccount);
-			}
 		}
+	}
+
+	private Object getAccountLock(String fromAccountId, String toAccountId) {
+		return fromAccountId.compareTo(toAccountId) < 0 ? (fromAccountId + toAccountId).intern()
+				: (toAccountId + fromAccountId).intern();
 	}
 
 }

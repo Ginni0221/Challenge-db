@@ -58,11 +58,13 @@ public class AccountsController {
 		try {
 			accountsService.transferAmount(transferRequest);
 		} catch (TransferValidationException te) {
+			log.error("Transfer failed due to validation failure: ",te.getMessage());
 			return new ResponseEntity<>(te.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			log.error("Transfer failed due to exception: ",e);
+			return new ResponseEntity<>("Transfer Failed.",HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.ok().body("Transfer Successful.");
+		return ResponseEntity.ok("Transfer Successful.");
 	}
 
 }
